@@ -1,0 +1,30 @@
+# Ignore VS Code workspace settings
+.vscode/
+
+# Ignore build artifacts
+build/
+*.exe
+*.out
+*.obj
+*.o
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+
+# Ignore CMake-generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Ignore debugging and temporary files
+*.log
+*.stackdump
+*.tmp
+*.swp
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
