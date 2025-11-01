@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <algorithm>
 
 
 const std::map <std::string, std::string> escapeReplacements = {
@@ -9,15 +10,19 @@ const std::map <std::string, std::string> escapeReplacements = {
     {"\\t", "\t"},
     {"\\r", "\r"},
     {"\\n", "\n"},
-    {"\\c", ""},
-    {"\\b", "\b"},
-    {"\\a", "\a"}
+    {"\\c", ""},    //needs special implementation to stopfurther output
+    {"\\b", "\b"},  //needs special implementation to remove all spaces between text
+    {"\\a", "\a"}   //needs special implementation to make a sound
 };
 const std::vector <std::string> flags = {"-e", "-E", "-n"};
 
 void replaceEscapeSequences(std::string& str);
 
 int main(int argc, char** argv){
+
+    bool escapeFlag = false;
+    bool noEscapeFlag = false;
+    bool noNewLineFlag = false;
 
     if(argc < 2){
         std::cerr << "Please provide an argument." << std::endl;
@@ -28,10 +33,52 @@ int main(int argc, char** argv){
 
     for (std::string argument : arguments) {
 
-        replaceEscapeSequences(argument);
+        if(argument == flags[0]){ //-e
+            escapeFlag = true;
+            noEscapeFlag = false;
+            continue;
+        }
+        else if(argument == flags[1]){ //-E
+            noEscapeFlag = true;
+            escapeFlag = false;
+            continue;
+        }
+        else if(argument == flags[2]){ //-n
+            noNewLineFlag = true;
+            continue;
+        }
+        else {
+            break;
+        }
+    }
+
+    for (std::string& argument : arguments) {
+
+        auto it = std::find(flags.begin(), flags.end(), argument);
+        
+        if(it != flags.end()){
+            continue;
+        }
+
+        if(escapeFlag && !noEscapeFlag){
+            replaceEscapeSequences(argument);
+        }
 
         std::cout << argument;
+
+        if(argument != arguments.back()){
+            std::cout << " ";
+        }
+
+       
     }
+
+    if(!noNewLineFlag)
+    {
+        std::cout << std::endl;
+    }
+
+
     return 0;
 }
 
