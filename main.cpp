@@ -10,9 +10,7 @@ const std::map <std::string, std::string> escapeReplacements = {
     {"\\t", "\t"},
     {"\\r", "\r"},
     {"\\n", "\n"},
-    {"\\c", ""},    //needs special implementation to stopfurther output
     {"\\b", "\b"},  //needs special implementation to remove all spaces between text
-    {"\\a", "\a"}   //needs special implementation to make a sound
 };
 const std::vector <std::string> flags = {"-e", "-E", "-n"};
 
@@ -33,17 +31,17 @@ int main(int argc, char** argv){
 
     for (std::string argument : arguments) {
 
-        if(argument == flags[0]){ //-e
+        if(argument == flags[0]){ //-e, acknowledge escape sequences
             escapeFlag = true;
             noEscapeFlag = false;
             continue;
         }
-        else if(argument == flags[1]){ //-E
+        else if(argument == flags[1]){ //-E, do not acknowledge escape sequences
             noEscapeFlag = true;
             escapeFlag = false;
             continue;
         }
-        else if(argument == flags[2]){ //-n
+        else if(argument == flags[2]){ //-n, do not output the trailing newline
             noNewLineFlag = true;
             continue;
         }
@@ -64,20 +62,29 @@ int main(int argc, char** argv){
             replaceEscapeSequences(argument);
         }
 
+        if(argument.find("\\c") != std::string::npos){
+            argument = argument.substr(0, argument.find("\\c"));
+            std::cout << argument;
+
+            if(!noNewLineFlag)
+            {
+                std::cout << std::endl;
+            }
+
+            return 0;
+        }
+
         std::cout << argument;
 
         if(argument != arguments.back()){
             std::cout << " ";
-        }
-
-       
+        } 
     }
 
     if(!noNewLineFlag)
     {
         std::cout << std::endl;
     }
-
 
     return 0;
 }
@@ -95,3 +102,4 @@ void replaceEscapeSequences(std::string& str) {
         }
     }
 }
+
